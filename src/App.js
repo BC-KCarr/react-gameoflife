@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { blinker, toad, pulsar, beacon } from './presets/oscillators'
 import produce from 'immer'
 import './App.css';
 
@@ -98,7 +99,7 @@ function App() {
 
   const setPreset = () => {
 
- 
+    return setGrid(pulsar)
   }
 
 
@@ -106,7 +107,7 @@ function App() {
   return (
     <div >
 
-    <h1>{`Generation # ${genNum} `}</h1>
+    <h1>{`Generation ${genNum} `}</h1>
       <div className='Board'
         style={{
           display: 'grid',
