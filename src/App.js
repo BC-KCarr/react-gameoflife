@@ -1,12 +1,11 @@
-import React, { useState, useCallback, useRef, useReducer, useEffect } from 'react';
-import { blinker, toad, pulsar, beacon } from './presets/oscillators'
-import { lgBlinker, lgToad, lgPulsar, lgBeacon } from './presets/lg_presets/lg_oscillators'
-import { lgGlider, lgSwss, lgLwss } from './presets/lg_presets/lg_spaceships'
-import { lwss, glider } from './presets/spaceships'
+import React, { useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import SpacePresets from './components/spacePresets'
+import OscillatorPresets from './components/oscillatorPresets'
+import Rules from './components/rules'
 import produce from 'immer'
-import GridSelect from './gridInput'
+import GridSelect from './components/gridInput'
 import './App.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -49,10 +48,10 @@ function App() {
   const [grid, setGrid] = useState(() => {
     return generateEmptyGrid(gridSize.numRows, gridSize.numCols)
   })
-  
+
   const classes = useStyles();
 
-  
+
   const runningRef = useRef()
   runningRef.current = running
 
@@ -102,14 +101,10 @@ function App() {
   }, [genNum, gridSize])
 
 
-  const startStopSimulation = () => {
-    setRunning(!running)
-
-    if (!running) {
-      runningRef.current = true
-      runSimulation()
-    }
-    
+  const startSimulation = () => {
+    setRunning(true)
+    runningRef.current = true
+    runSimulation()
   }
 
   const setRandom = () => {
@@ -121,73 +116,70 @@ function App() {
     return setGrid(rows)
   }
 
-  const setPreset = () => {
-    if (gridSize.numRows === 25) {
-      setGrid(lwss)
-      setEmpty(false)
-    } else {
-      setGrid(lgLwss)
-      setEmpty(false)
-    }
-  }
-
   return (
-    <div >
+    <div>
+      <h1 style={{marginTop: '40px'}}>Conway's Game of Life</h1>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+        <div>
+          <h3>{`Generation ${genNum} `}</h3>
+          <div className='Board'
+            style={{
+              display: 'grid',
+              gridTemplateColumns: `repeat(${gridSize.numCols}, ${gridSize.cellSize}px)`
+            }}>
 
-      <h1>{`Generation ${genNum} `}</h1>
-      <div className='Board'
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${gridSize.numCols}, ${gridSize.cellSize}px)`
-        }}>
 
+            {grid.map((rows, i) =>
+              rows.map((col, k) =>
+                <div
+                  key={`${i}-${k}`}
+                  onClick={() => {
+                    const newGrid = produce(grid, gridCopy => {
+                      gridCopy[i][k] = grid[i][k] ? 0 : 1
+                    })
+                    console.log(newGrid)
+                    setGrid(newGrid)
+                    setEmpty(false)
+                  }}
+                  style={{
+                    width: gridSize.cellSize,
+                    height: gridSize.cellSize,
+                    backgroundColor: grid[i][k] ? 'green' : undefined,
+                    border: 'solid 1px black'
+                  }}
+                />
+              ))}
+          </div>
+          <div className={classes.root}>
+            <Button variant='contained' onClick={() => !empty && startSimulation()}>
+              Start
+            </Button>
 
-        {grid.map((rows, i) =>
-          rows.map((col, k) =>
-            <div
-              key={`${i}-${k}`}
-              onClick={() => {
-                const newGrid = produce(grid, gridCopy => {
-                  gridCopy[i][k] = grid[i][k] ? 0 : 1
-                })
-                console.log(newGrid)
-                setGrid(newGrid)
-                setEmpty(false)
-              }}
-              style={{
-                width: gridSize.cellSize,
-                height: gridSize.cellSize,
-                backgroundColor: grid[i][k] ? 'green' : undefined,
-                border: 'solid 1px black'
-              }}
-            />
-          ))}
-      </div>
-      <div className={classes.root} style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button variant='contained' onClick={() => !empty && startStopSimulation()}>
-          Start
-        </Button>
+            <Button variant='contained' onClick={() => setRunning(false)}>
+              Stop
+            </Button>
 
-        <Button variant='contained' onClick={() => setRunning(false)}>
-          Stop
-        </Button>
+            <Button variant='contained' onClick={() => {
+              setGenNum(0)
+              setGrid(generateEmptyGrid(gridSize.numRows, gridSize.numCols))
+              setRunning(false)
+              setEmpty(true)
+            }}>
+              Clear
+            </Button>
 
-        <Button variant='contained' onClick={() => {
-          setGrid(generateEmptyGrid(gridSize.numRows, gridSize.numCols))
-          setGenNum(0)
-          setEmpty(true)
-        }}>
-          Clear
-        </Button>
+            <Button variant='contained' onClick={() => setRandom()}>
+              Random
+            </Button>
 
-        <Button variant='contained' onClick={() => setRandom()}>
-          Random
-        </Button>
-      
-        <Button variant='contained' onClick={() => setPreset()}>
-          Preset
-        </Button>
-        <GridSelect gridSize={gridSize} empty={empty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
+            <GridSelect gridSize={gridSize} empty={empty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
+          </div>
+        </div>
+        <div>
+          <SpacePresets gridSize={gridSize} setEmpty={setEmpty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
+          <OscillatorPresets gridSize={gridSize} setEmpty={setEmpty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
+        </div>
+        <Rules />
       </div>
     </div>
   );
