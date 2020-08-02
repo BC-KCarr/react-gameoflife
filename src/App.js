@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useRef, useReducer, useEffect } from 'react';
 import { blinker, toad, pulsar, beacon } from './presets/oscillators'
+import { lgBlinker, lgToad, lgPulsar, lgBeacon } from './presets/lg_presets/lg_oscillators'
+import { lgGlider, lgSwss, lgLwss } from './presets/lg_presets/lg_spaceships'
 import { lwss, glider } from './presets/spaceships'
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -42,6 +44,7 @@ function App() {
     cellSize: 25
   })
   const [running, setRunning] = useState(false)
+  const [empty, setEmpty] = useState(true)
   let [genNum, setGenNum] = useState(0)
   const [grid, setGrid] = useState(() => {
     return generateEmptyGrid(gridSize.numRows, gridSize.numCols)
@@ -95,16 +98,18 @@ function App() {
     return setTimeout(() => {
       setGenNum(genNum++)
       runSimulation()
-    }, 50)
+    }, 20)
   }, [genNum, gridSize])
 
 
   const startStopSimulation = () => {
     setRunning(!running)
+
     if (!running) {
       runningRef.current = true
       runSimulation()
     }
+    
   }
 
   const setRandom = () => {
@@ -112,11 +117,18 @@ function App() {
     for (let i = 0; i < gridSize.numRows; i++) {
       rows.push(Array.from(Array(gridSize.numCols), () => Math.random() > 0.7 ? 1 : 0))
     }
+    setEmpty(false)
     return setGrid(rows)
   }
 
   const setPreset = () => {
-    return setGrid(lwss)
+    if (gridSize.numRows === 25) {
+      setGrid(lwss)
+      setEmpty(false)
+    } else {
+      setGrid(lgLwss)
+      setEmpty(false)
+    }
   }
 
   return (
@@ -140,6 +152,7 @@ function App() {
                 })
                 console.log(newGrid)
                 setGrid(newGrid)
+                setEmpty(false)
               }}
               style={{
                 width: gridSize.cellSize,
@@ -151,13 +164,18 @@ function App() {
           ))}
       </div>
       <div className={classes.root} style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button variant='contained' onClick={() => startStopSimulation()}>
-          {running ? 'Stop' : 'Start'}
+        <Button variant='contained' onClick={() => !empty && startStopSimulation()}>
+          Start
+        </Button>
+
+        <Button variant='contained' onClick={() => setRunning(false)}>
+          Stop
         </Button>
 
         <Button variant='contained' onClick={() => {
           setGrid(generateEmptyGrid(gridSize.numRows, gridSize.numCols))
           setGenNum(0)
+          setEmpty(true)
         }}>
           Clear
         </Button>
@@ -165,11 +183,11 @@ function App() {
         <Button variant='contained' onClick={() => setRandom()}>
           Random
         </Button>
-
+      
         <Button variant='contained' onClick={() => setPreset()}>
           Preset
         </Button>
-        <GridSelect gridSize={gridSize} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
+        <GridSelect gridSize={gridSize} empty={empty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
       </div>
     </div>
   );
