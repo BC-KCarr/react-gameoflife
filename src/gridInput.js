@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function GridSelect({ setGridSize, generateEmptyGrid, setGrid }) {
+export default function GridSelect({ setGridSize, generateEmptyGrid, setGrid, grid }) {
   const classes = useStyles();
   const [size, setSize] = React.useState('small');
 
@@ -26,7 +26,7 @@ export default function GridSelect({ setGridSize, generateEmptyGrid, setGrid }) 
       setGridSize({
         numCols: 50,
         numRows: 50,
-        cellSize: 15
+        cellSize: 13
       })
       setGrid(generateEmptyGrid(50, 50))
     } else {

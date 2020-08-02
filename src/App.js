@@ -95,8 +95,8 @@ function App() {
     return setTimeout(() => {
       setGenNum(genNum++)
       runSimulation()
-    }, 100)
-  }, [genNum])
+    }, 50)
+  }, [genNum, gridSize])
 
 
   const startStopSimulation = () => {
@@ -138,6 +138,7 @@ function App() {
                 const newGrid = produce(grid, gridCopy => {
                   gridCopy[i][k] = grid[i][k] ? 0 : 1
                 })
+                console.log(newGrid)
                 setGrid(newGrid)
               }}
               style={{
@@ -168,7 +169,7 @@ function App() {
         <Button variant='contained' onClick={() => setPreset()}>
           Preset
         </Button>
-        <GridSelect gridSize={gridSize} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} />
+        <GridSelect gridSize={gridSize} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
       </div>
     </div>
   );
