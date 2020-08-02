@@ -1,10 +1,19 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useReducer, useEffect } from 'react';
 import { blinker, toad, pulsar, beacon } from './presets/oscillators'
+import { lwss, glider } from './presets/spaceships'
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import produce from 'immer'
+import GridSelect from './gridInput'
 import './App.css';
 
-const numRows = 25
-const numCols = 25
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  },
+}));
 
 const operations = [
   [0, 1],
@@ -17,7 +26,7 @@ const operations = [
   [-1, 0],
 ]
 
-const generateEmptyGrid = () => {
+const generateEmptyGrid = (numRows, numCols) => {
   const rows = []
   for (let i = 0; i < numRows; i++) {
     rows.push(Array.from(Array(numCols), () => 0))
@@ -25,27 +34,35 @@ const generateEmptyGrid = () => {
   return rows
 }
 
+
 function App() {
-  const [grid, setGrid] = useState(() => {
-    return generateEmptyGrid()
+  const [gridSize, setGridSize] = useState({
+    numRows: 25,
+    numCols: 25,
+    cellSize: 25
   })
   const [running, setRunning] = useState(false)
   let [genNum, setGenNum] = useState(0)
+  const [grid, setGrid] = useState(() => {
+    return generateEmptyGrid(gridSize.numRows, gridSize.numCols)
+  })
+  
+  const classes = useStyles();
 
+  
   const runningRef = useRef()
   runningRef.current = running
 
   // counts neighbors that wrap around to the far side as well 
   const countNeighbors = (grid, x, y) => {
     return operations.reduce((acc, [i, j]) => {
-      const row = (x + i + numRows) % numRows;
-      const col = (y + j + numCols) % numCols;
+      const row = (x + i + gridSize.numRows) % gridSize.numRows;
+      const col = (y + j + gridSize.numCols) % gridSize.numCols;
       acc += grid[row][col];
       return acc;
     }, 0);
 
   };
-
 
   const runSimulation = useCallback(() => {
     // base case that kills simulation
@@ -58,8 +75,8 @@ function App() {
       // immutable js easily 
       return produce(g, gridCopy => {
         // loop through every cell in current grid
-        for (let i = 0; i < numRows; i++) {
-          for (let k = 0; k < numCols; k++) {
+        for (let i = 0; i < gridSize.numRows; i++) {
+          for (let k = 0; k < gridSize.numCols; k++) {
             // count the num of neighbors 
             const neighbors = countNeighbors(g, i, k)
 
@@ -75,11 +92,12 @@ function App() {
       })
     })
 
-    setTimeout(() => {
-      runSimulation()
+    return setTimeout(() => {
       setGenNum(genNum++)
+      runSimulation()
     }, 100)
-  }, [])
+  }, [genNum])
+
 
   const startStopSimulation = () => {
     setRunning(!running)
@@ -91,29 +109,26 @@ function App() {
 
   const setRandom = () => {
     const rows = []
-    for (let i = 0; i < numRows; i++) {
-      rows.push(Array.from(Array(numCols), () => Math.random() > 0.7 ? 1 : 0))
+    for (let i = 0; i < gridSize.numRows; i++) {
+      rows.push(Array.from(Array(gridSize.numCols), () => Math.random() > 0.7 ? 1 : 0))
     }
     return setGrid(rows)
   }
 
   const setPreset = () => {
-
-    return setGrid(pulsar)
+    return setGrid(lwss)
   }
-
-
 
   return (
     <div >
 
-    <h1>{`Generation ${genNum} `}</h1>
+      <h1>{`Generation ${genNum} `}</h1>
       <div className='Board'
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${numCols}, 25px)`
+          gridTemplateColumns: `repeat(${gridSize.numCols}, ${gridSize.cellSize}px)`
         }}>
-          
+
 
         {grid.map((rows, i) =>
           rows.map((col, k) =>
@@ -123,37 +138,37 @@ function App() {
                 const newGrid = produce(grid, gridCopy => {
                   gridCopy[i][k] = grid[i][k] ? 0 : 1
                 })
-                console.log(grid)
                 setGrid(newGrid)
               }}
               style={{
-                width: 25,
-                height: 25,
+                width: gridSize.cellSize,
+                height: gridSize.cellSize,
                 backgroundColor: grid[i][k] ? 'green' : undefined,
                 border: 'solid 1px black'
               }}
             />
           ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center'}}>
-        <button onClick={() => startStopSimulation()}>
+      <div className={classes.root} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button variant='contained' onClick={() => startStopSimulation()}>
           {running ? 'Stop' : 'Start'}
-        </button>
+        </Button>
 
-        <button onClick={() => {
-          setGrid(generateEmptyGrid())
+        <Button variant='contained' onClick={() => {
+          setGrid(generateEmptyGrid(gridSize.numRows, gridSize.numCols))
           setGenNum(0)
-          }}>
+        }}>
           Clear
-        </button>
+        </Button>
 
-        <button onClick={() => setRandom()}>
+        <Button variant='contained' onClick={() => setRandom()}>
           Random
-        </button>
+        </Button>
 
-        <button onClick={() => setPreset()}>
+        <Button variant='contained' onClick={() => setPreset()}>
           Preset
-        </button>
+        </Button>
+        <GridSelect gridSize={gridSize} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} />
       </div>
     </div>
   );
