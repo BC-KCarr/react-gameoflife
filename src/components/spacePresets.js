@@ -47,12 +47,13 @@ export default function Presets({ gridSize, generateEmptyGrid, setGrid, running,
   return (
     <div>
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Spaceships</InputLabel>
+        <InputLabel style={{color: '#ba000d'}} id="demo-simple-select-label">Spaceships</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={preset}
           onChange={handleChange}
+          color='secondary'
         >
           <MenuItem value='glider'>Glider</MenuItem>
           <MenuItem value='lwss'>LWSS</MenuItem>

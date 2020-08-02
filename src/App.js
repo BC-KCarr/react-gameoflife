@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import SpacePresets from './components/spacePresets'
 import OscillatorPresets from './components/oscillatorPresets'
 import Rules from './components/rules'
+import About from './components/about'
 import produce from 'immer'
 import GridSelect from './components/gridInput'
 import './App.css';
@@ -118,7 +119,7 @@ function App() {
 
   return (
     <div>
-      <h1 style={{marginTop: '40px'}}>Conway's Game of Life</h1>
+      <h1 style={{marginTop: '40px', marginBottom: '50px'}}>Conway's Game of Life</h1>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
         <div>
           <h3>{`Generation ${genNum} `}</h3>
@@ -144,22 +145,22 @@ function App() {
                   style={{
                     width: gridSize.cellSize,
                     height: gridSize.cellSize,
-                    backgroundColor: grid[i][k] ? 'green' : undefined,
+                    backgroundColor: grid[i][k] ? '#ff7961' : undefined,
                     border: 'solid 1px black'
                   }}
                 />
               ))}
           </div>
-          <div className={classes.root}>
-            <Button variant='contained' onClick={() => !empty && startSimulation()}>
+          <span className={classes.root} style={{ width: '100%', display: 'flex', flexDirection: 'row'}}>
+            <Button variant='contained' color='secondary' onClick={() => !empty && startSimulation()}>
               Start
             </Button>
 
-            <Button variant='contained' onClick={() => setRunning(false)}>
+            <Button variant='contained' color='secondary' onClick={() => setRunning(false)}>
               Stop
             </Button>
 
-            <Button variant='contained' onClick={() => {
+            <Button variant='contained' color='secondary' onClick={() => {
               setGenNum(0)
               setGrid(generateEmptyGrid(gridSize.numRows, gridSize.numCols))
               setRunning(false)
@@ -168,19 +169,21 @@ function App() {
               Clear
             </Button>
 
-            <Button variant='contained' onClick={() => setRandom()}>
+            <Button variant='contained' color='secondary' onClick={() => setRandom()}>
               Random
             </Button>
 
             <GridSelect gridSize={gridSize} empty={empty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
-          </div>
+          </span>
         </div>
         <div>
+          <h3>PreSets</h3>
           <SpacePresets gridSize={gridSize} setEmpty={setEmpty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
           <OscillatorPresets gridSize={gridSize} setEmpty={setEmpty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
         </div>
         <Rules />
       </div>
+      <About />
     </div>
   );
 }

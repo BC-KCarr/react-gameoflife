@@ -30,15 +30,16 @@ export default function GridSelect({ setGridSize, generateEmptyGrid, setGrid, ru
     <div>
       {!running && empty ? (
         <>
-          <InputLabel id="demo-simple-select-label">Grid Size</InputLabel>
+          <InputLabel style={{color: '#ba000d'}} id="demo-simple-select-label">Grid Size</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={size}
             onChange={handleChange}
+            color='secondary'
           >
-            <MenuItem name='small' value='small'>25 x 25</MenuItem>
-            <MenuItem name='large' value='large'>50 x 50</MenuItem>
+            <MenuItem name='small' value='small' style={{color: '#ba000d'}}>25 x 25</MenuItem>
+            <MenuItem name='large' value='large' style={{color: '#ba000d'}}>50 x 50</MenuItem>
           </Select>
         </>
       ) : (

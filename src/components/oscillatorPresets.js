@@ -67,12 +67,13 @@ export default function Presets({ gridSize, generateEmptyGrid, setGrid, running,
   return (
     <div>
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Oscillators</InputLabel>
+        <InputLabel style={{color: '#ba000d'}} id="demo-simple-select-label">Oscillators</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={preset}
           onChange={handleChange}
+          color='secondary'
         >
           <MenuItem value='pulsar'>Pulsar</MenuItem>
           <MenuItem value='blinker'>Blinker</MenuItem>
