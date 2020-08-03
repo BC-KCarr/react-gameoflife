@@ -6,11 +6,11 @@ function Rules() {
       <h3 style={{ marginBottom: '25px'}}>Rules</h3>
       <h4>For a space that is 'populated'</h4>
       <div style={{ textAlign: 'left'}}>
-      <p>
-        Each cell with one or no neighbors dies, as if by solitude.<br/>
-        Each cell with four or more neighbors dies, as if by overpopulation.<br/>
-        Each cell with two or three neighbors survives.<br/> 
-      </p>
+      <ul>
+        <li>Each cell with one or no neighbors dies, as if by solitude.</li>
+        <li>Each cell with four or more neighbors dies, as if by overpopulation.</li>
+        <li>Each cell with two or three neighbors survives.</li> 
+      </ul>
       </div>
       <h4>For a space that is 'empty' or 'unpopulated'</h4>
       <p>
