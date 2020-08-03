@@ -177,7 +177,7 @@ function App() {
           </span>
         </div>
         <div>
-          <h3>PreSets</h3>
+          <h3>Presets</h3>
           <SpacePresets gridSize={gridSize} setEmpty={setEmpty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
           <OscillatorPresets gridSize={gridSize} setEmpty={setEmpty} running={running} generateEmptyGrid={generateEmptyGrid} setGrid={setGrid} setGridSize={setGridSize} grid={grid} />
         </div>
