@@ -98,7 +98,7 @@ function App() {
     return setTimeout(() => {
       setGenNum(genNum++)
       runSimulation()
-    }, 5)
+    }, 100)
   }, [genNum, gridSize])
 
 
